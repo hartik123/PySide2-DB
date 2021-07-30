@@ -11,7 +11,7 @@ class Window(QWidget):
         self.setStyleSheet("background-color: black")
         self.setWindowTitle("HS VoiceCall pvt Ltd.")
         
-        self.company_name = QLabel("HSVOIP CALL")
+        self.company_name = QLabel("HS VOICE CALL")
         self.company_name.setStyleSheet("color: white; font-size: 40px")
         self.company_name.setAlignment(Qt.AlignHCenter)
         vbox = QVBoxLayout()
