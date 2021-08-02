@@ -108,6 +108,7 @@ class Window(QWidget):
             self.emailLabelField = QLabel(row[4],self)
             self.visitLabelField = QLabel(str(row[6]),self)
             self.pdfButtonField = QPushButton("Open Pdf", self)
+            self.pdfButtonField.setStyleSheet("margin-left: 0px")
             self.pdfButtonField.clicked.connect(self.openingPDF)
 
             self.idLabelField.setStyleSheet("color: white; font-size: 15px")
