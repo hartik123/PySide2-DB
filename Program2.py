@@ -14,22 +14,30 @@ class Window(QWidget):
         self.company_name = QLabel("HS VOICE CALL")
         self.company_name.setStyleSheet("color: white; font-size: 40px")
         self.company_name.setAlignment(Qt.AlignHCenter)
-        vbox = QVBoxLayout()
+
+        # self.scroll = QScrollArea()             # Scroll Area which contains the widgets, set as the centralWidget
+        # self.widget = QWidget()                 # Widget that contains the collection of Vertical Box
+
+        self.vbox = QVBoxLayout()
 
         self.retrieve_form()
         self.showData()
-        self.hideDataField()
+        # self.hideDataField()
 
-        vbox.addWidget(self.company_name)
-        vbox.addStretch(1)
-        vbox.addLayout(self.hbox1)
-        vbox.addStretch(1)
-        vbox.addLayout(self.hbox2)
-        vbox.addStretch(1)
-        vbox.addLayout(self.hbox3)
-        vbox.addStretch(1)
+        self.vbox.addWidget(self.company_name)
+        self.vbox.addStretch(1)
+        self.vbox.addLayout(self.hbox1)
+        self.vbox.addStretch(1)
+        self.vbox.addLayout(self.hbox2)
+        self.vbox.addStretch(1)
+        
 
-        self.setLayout(vbox)
+        self.setLayout(self.vbox)
+
+        # self.scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        # self.scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        # self.scroll.setWidgetResizable(True)
+        # self.scroll.setWidget(self)
 
     def retrieve_form(self):
         self.hbox1 = QHBoxLayout()
@@ -48,7 +56,7 @@ class Window(QWidget):
         self.hbox1.addStretch(1)
 
         self.searchBtn.clicked.connect(self.findInDatabase)
-        self.searchBtn.clicked.connect(self.showDataField)
+        self.searchBtn.clicked.connect(self.hideDataField)
 
     def showData(self):
         self.hbox2 = QHBoxLayout()
@@ -78,33 +86,54 @@ class Window(QWidget):
         # self.hbox2.addStretch(1)
 
     def hideDataField(self):
-        self.hbox3 = QHBoxLayout()
-        self.idLabelField = QLabel("",self)
-        self.nameLabelField = QLabel("",self)
-        self.addressLabelField = QLabel("",self)
-        self.PhoneLabelField = QLabel("",self)
-        self.emailLabelField = QLabel("",self)
-        self.visitLabelField = QLabel("",self)
-        self.pdfButtonField = QPushButton("", self)
-        self.pdfButtonField.clicked.connect(self.openingPDF)
+        connection = mc.connect(host='localhost',
+                                             database='cinegencenda',
+                                             user='root',
+                                             password='root')
 
-        self.idLabelField.setStyleSheet("color: white; font-size: 15px")
-        self.nameLabelField.setStyleSheet("color: white; font-size: 15px")
-        self.addressLabelField.setStyleSheet("color: white; font-size: 15px")
-        self.PhoneLabelField.setStyleSheet("color: white; font-size: 15px")
-        self.emailLabelField.setStyleSheet("color: white; font-size: 15px")
-        self.visitLabelField.setStyleSheet("color: white; font-size: 15px")
-        self.pdfButtonField.setStyleSheet("color: white; font-size: 15px")
+        cursor = connection.cursor()
+        sql_fetch_blob_query = "SELECT id,name,address,phone,email,pdf_file,visit from cinegencemedia where name= \""+self.searchFieldLineEdit.text()+ "\""
 
-        self.hbox3.addWidget(self.idLabelField)
-        self.hbox3.addWidget(self.nameLabelField)
-        self.hbox3.addWidget(self.addressLabelField)
-        self.hbox3.addWidget(self.PhoneLabelField)
-        self.hbox3.addWidget(self.emailLabelField)
-        self.hbox3.addWidget(self.visitLabelField)
-        self.hbox3.addWidget(self.pdfButtonField)
-        # self.hbox3.addWidget(self.pdfLabelField)
-        # self.hbox3.addStretch(1)
+        cursor.execute(sql_fetch_blob_query)
+        self.record = cursor.fetchall()
+        print("printing record")
+        # row = self.record[0]
+
+        for row in self.record:
+            self.hbox3 = QHBoxLayout()
+            self.idLabelField = QLabel(str(row[0]),self)
+            self.nameLabelField = QLabel(row[1],self)
+            self.addressLabelField = QLabel(row[2],self)
+            self.PhoneLabelField = QLabel(str(row[3]),self)
+            self.emailLabelField = QLabel(row[4],self)
+            self.visitLabelField = QLabel(str(row[6]),self)
+            self.pdfButtonField = QPushButton("Open Pdf", self)
+            self.pdfButtonField.clicked.connect(self.openingPDF)
+
+            self.idLabelField.setStyleSheet("color: white; font-size: 15px")
+            self.nameLabelField.setStyleSheet("color: white; font-size: 15px")
+            self.addressLabelField.setStyleSheet("color: white; font-size: 15px")
+            self.PhoneLabelField.setStyleSheet("color: white; font-size: 15px")
+            self.emailLabelField.setStyleSheet("color: white; font-size: 15px")
+            self.visitLabelField.setStyleSheet("color: white; font-size: 15px")
+            self.pdfButtonField.setStyleSheet("color: white; font-size: 15px")
+
+            self.hbox3.addWidget(self.idLabelField)
+            self.hbox3.addWidget(self.nameLabelField)
+            self.hbox3.addWidget(self.addressLabelField)
+            self.hbox3.addWidget(self.PhoneLabelField)
+            self.hbox3.addWidget(self.emailLabelField)
+            self.hbox3.addWidget(self.visitLabelField)
+            self.hbox3.addWidget(self.pdfButtonField)
+            # self.hbox3.addWidget(self.pdfLabelField)
+            # self.hbox3.addStretch(1)
+
+            self.vbox.addLayout(self.hbox3)
+            self.vbox.addStretch(1)
+
+        
+
+        # self.setCentralWidget(self.scroll)
 
 
     def showDataField(self):

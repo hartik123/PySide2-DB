@@ -5,7 +5,6 @@ import sys
 import mysql.connector as mc
 from datetime import datetime
 
-
 class Window(QWidget):
     def __init__(self):
         super().__init__()
@@ -26,7 +25,7 @@ class Window(QWidget):
         self.setLayout(vbox)
 
     def form(self):
-
+        global name1
         #NAME
         self.hbox1 = QHBoxLayout()
         self.nameLabel = QLabel("Name: ", self)
@@ -83,7 +82,7 @@ class Window(QWidget):
 
 
 
-    def convert_data(self, file_name):
+    def convert_data(file_name):
         with open(file_name, 'rb') as file:
             binary_data = file.read()
         return binary_data
@@ -108,7 +107,7 @@ class Window(QWidget):
             print(now)
 
             query = "INSERT INTO cinegencemedia (name, address, phone, email, pdf_file, visit) VALUES (%s,%s,%s,%s,%s,%s)"
-            pdf_file = self.convert_data('D:/Learning Python/29-7-2021/heloo.pdf')
+            pdf_file = Window.convert_data('D:/Learning Python/29-7-2021/heloo.pdf')
             value = (name,address,phone,email,pdf_file, now)
 
             mycursor.execute(query, value)
